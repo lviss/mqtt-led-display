@@ -42,12 +42,13 @@ def on_message(client, userdara, msg):
     elif msg.topic == SERVER_LOAD_TOPIC:
         print msg.payload
         last_load_received = float(msg.payload)
-        scrollphathd.clear_rect(0,6,None,None) # None defaults to disqlay size
+        scrollphathd.clear_rect(0,6,None,1) # None defaults to disqlay size
         brightness = 0.5
         if last_load_received > 8.0:
             brightness = 1 
             last_load_received = 8
-        scrollphathd.fill(brightness, int(17 - last_load_received/8.0*17), 6)
+        load_bar_width = last_load_received/8.0*17
+        scrollphathd.fill(brightness, int(17 - load_bar_width), 6, int(load_bar_width + 1), 1)
         scrollphathd.show()
 	
 scrollphathd.set_clear_on_exit()
