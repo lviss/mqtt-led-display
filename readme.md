@@ -18,3 +18,10 @@ pip install paho-mqtt
 ./mqtt-led-display.py
 ```
 
+# Run at boot
+
+```
+sudo cp mqtt-led-display.service /etc/systemd/system/
+sudo systemctl enable mqtt-led-display.service
+sudo systemctl start mqtt-led-display.service
+```

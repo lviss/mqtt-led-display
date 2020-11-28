@@ -1,0 +1,16 @@
+[Unit]
+Description=MQTT LED Display Service
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/mqtt-led-display
+ExecStart=/home/pi/mqtt-led-display/mqtt-led-display.py
+[Install]
+WantedBy=multi-user.target
