@@ -6,6 +6,10 @@ import paho.mqtt.client as mqtt
 import scrollphathd
 from scrollphathd.fonts import font3x5
 import threading
+import datetime
+
+# amount to dim the display at night
+night_brightness_modifier = 0.5
 
 scrollphathd.rotate(180)
 
@@ -30,6 +34,8 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdara, msg):
+    # dim the display before 7am and after 7pm
+    brightness_modifier = 1 if 7 <= datetime.datetime.now().hour <= 19 else night_brightness_modifier
     if msg.topic == MQTT_TOPIC:
         global pos_x
         payload = json.loads(msg.payload)
@@ -37,7 +43,7 @@ def on_message(client, userdara, msg):
         last_temperature_received = str(payload["actual_temperature"])
         # display height is 7, save the bottom row for the graph
         scrollphathd.clear_rect(0,0,None,6) # None defaults to display size
-        scrollphathd.write_string(last_temperature_received, brightness=0.5, font=font3x5)
+        scrollphathd.write_string(last_temperature_received, brightness=0.5 * brightness_modifier, font=font3x5)
         scrollphathd.show()
     elif msg.topic == SERVER_LOAD_TOPIC:
         print msg.payload
@@ -48,7 +54,7 @@ def on_message(client, userdara, msg):
             brightness = 1 
             last_load_received = 8
         load_bar_width = last_load_received/8.0*17
-        scrollphathd.fill(brightness, int(17 - load_bar_width), 6, int(load_bar_width + 1), 1)
+        scrollphathd.fill(brightness * brightness_modifier, int(17 - load_bar_width), 6, int(load_bar_width + 1), 1)
         scrollphathd.show()
 	
 scrollphathd.set_clear_on_exit()
